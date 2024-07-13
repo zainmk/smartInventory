@@ -1,38 +1,26 @@
 import '../App.js';
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 
 import TitleBar from '../components/TitleBar.js';
 import CardList from '../components/CardList.js';
 import Box from '@mui/material/Box';
 
-import { UserContext } from '../helpers/userContext';
+import { getProductList } from '../helpers/database.js'
 
-import { getMediaList, updateMediaList, getWatchList, updateWatchList } from '../helpers/database.js'
 
-function MainPage() {
+function MainPage({ app }) {
 
-  const { user } = useContext(UserContext);
-  const [mediaList, setMediaList] = useState() // TODO: consider a context for this variable
-  const [watchList, setWatchList] = useState();
+  const [productList, setProductList] = useState({})
 
   useEffect(()=> {
-    user && getMediaList(user).then(res => setMediaList(res ? res : []))
-    user && getWatchList(user).then(res => setWatchList(res ? res : []))
-  }, [user])
-
-  useEffect(()=>{
-    updateMediaList(user, mediaList)
-  }, [user, mediaList])
-
-  useEffect(()=>{
-      updateWatchList(user, watchList)
-  }, [user, watchList])
+    getProductList().then(res => setProductList(res ? res : {}))
+  }, [])
 
   return (
       <Box sx={{ display: 'flex', flexDirection: 'column', height:"100vh" }}>
         <TitleBar  />
-        <Box sx={{ flex: 1, backgroundImage:"url('rollinghills.gif')" }}>
-          <CardList mediaList={mediaList} setMediaList={setMediaList} watchList={watchList} setWatchList={setWatchList} />
+        <Box sx={{ flex: 1, backgroundSize: "100%", backgroundImage:"url('falling-money.gif')" }}>
+          <CardList productList={productList} setProductList={setProductList} />
         </Box>
       </Box>
   );

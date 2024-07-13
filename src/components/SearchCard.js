@@ -1,17 +1,12 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
-import Button from '@mui/material/Button'
 
 import AddIcon from '@mui/icons-material/Add';
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -57,29 +52,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 
-function SearchCard({ setMediaList }){
+function SearchCard({ setProductList }){
 
     const [searchText, setSearchText] = useState('');
-    const [searchData, setSearchData] = useState([]);
-
-    const onAddSearchEntry = (entry) => {
-        // check for duplicates
-        setMediaList((mediaList) => mediaList?.filter(media => media.imdbID === entry.imdbID).length > 0 ? mediaList : [entry, ...mediaList])
-        setSearchData([]) 
-    }
-
-    useEffect(()=>{
-        if(searchText.length > 3){
-            fetch(`https://www.omdbapi.com/?apikey=522792c1&s=${searchText}`)
-                .then(res => res.json())
-                .then(res => res.Response !== 'False' ? res.Search : [])
-                .then(res => setSearchData(res))
-                .catch(err => console.log(err))
-        }
-        else{
-            setSearchData([])
-        }
-    }, [searchText])
 
     return (
         <>
@@ -94,24 +69,6 @@ function SearchCard({ setMediaList }){
                     placeholder="Search..."
                 />  
             </Search>
-            {searchData.length > 0 && <Table >
-                <TableBody>
-                    {searchData.map((result, index) => (
-                        <>
-                            <TableRow key={result.imdbID} sx={{ [`& .MuiTableCell-root`]: { border: "none" } }}  >
-                                <TableCell >{result.Title}</TableCell>
-                                <TableCell >{result.Year}</TableCell>
-                                <TableCell >{result.Type}</TableCell>
-                            </TableRow>
-                            <TableRow key={index}>
-                                <TableCell colSpan={3} sx={{ paddingTop: "0px", paddingBottom: "25px" }} >
-                                    <Button variant='outlined' onClick={()=>onAddSearchEntry(result)} sx={{ width: "100%" }}> + </Button>
-                                </TableCell>
-                            </TableRow>
-                        </>
-                    ))}
-                </TableBody>
-            </Table>}
         </>
     )
 }

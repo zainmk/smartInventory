@@ -1,40 +1,26 @@
 import './App.css';
 import React from "react";
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
+import { initializeApp } from "firebase/app";
+
 import MainPage from "./pages/MainPage";
-import RegisterPage from "./pages/RegisterPage.js";
-import ProtectedRoutes from "./helpers/ProtectedRoutes.js";
 
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+const firebaseConfig = {
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_DATABASE_URL,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID
+};
 
-import { UserContext } from './helpers/userContext';
-import { useState } from 'react';
-
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 export default function App() {
 
-  const [user, setUser] = useState(localStorage.getItem('user')); //TODO: CONSIDER A CUSTOM HOOK
-
   return (
-    <UserContext.Provider value={{ user, setUser }}>
-      <ThemeProvider theme={darkTheme}>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<ProtectedRoutes />}>
-              <Route path="/" element={<MainPage />} />
-            </Route>
-            <Route path="register" element={<RegisterPage />} />
-            <Route path="login" element={<LoginPage />} />
-          </Routes>
-        </BrowserRouter>
-      </ThemeProvider>
-    </UserContext.Provider>
+      <MainPage firebaseApp={app} />
   )
 }
